@@ -117,11 +117,55 @@ public class RegistroHuesped extends JFrame {
 		header.add(btnAtras);
 		
 		labelAtras = new JLabel("<");
+		labelAtras.setBounds(0, 0, 53, 36);
+		btnAtras.add(labelAtras);
 		labelAtras.setHorizontalAlignment(SwingConstants.CENTER);
 		labelAtras.setForeground(Color.WHITE);
 		labelAtras.setFont(new Font("Roboto", Font.PLAIN, 23));
-		labelAtras.setBounds(0, 0, 53, 36);
-		btnAtras.add(labelAtras);
+		
+		JPanel btnexit_1 = new JPanel();
+		btnexit_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				MenuPrincipal principal = new MenuPrincipal();
+				principal.setVisible(true);
+				dispose();
+			}  
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnexit_1.setBackground(Color.red);
+				labelExit.setForeground(Color.white);
+			}			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				 btnexit_1.setBackground(Color.white);
+			     labelExit.setForeground(Color.black);
+			}
+		});
+		btnexit_1.setLayout(null);
+		btnexit_1.setBackground(new Color(12, 138, 199));
+		btnexit_1.setBounds(429, 0, 53, 36);
+		header.add(btnexit_1);
+		
+		labelExit = new JLabel("X");
+		labelExit.setForeground(Color.BLACK);
+		labelExit.setBounds(0, 0, 53, 36);
+		btnexit_1.add(labelExit);
+		labelExit.setHorizontalAlignment(SwingConstants.CENTER);
+		labelExit.setFont(new Font("Roboto", Font.PLAIN, 18));
+		
+		btnexit_1.setForeground(new Color(255, 255, 255));
+		btnexit_1.setLayout(null);
+		btnexit_1.setBackground(new Color(255, 255, 255));
+		btnexit_1.setBounds(857, 0, 53, 36);
+		header.add(btnexit_1);
+		
+		JLabel labelExit_1 = new JLabel("X");
+		labelExit_1.setBounds(0, 0, 53, 36);
+		btnexit_1.add(labelExit_1);
+		labelExit_1.setHorizontalAlignment(SwingConstants.CENTER);
+		labelExit_1.setForeground(new Color(0, 0, 0));
+		labelExit_1.setFont(new Font("Dialog", Font.PLAIN, 18));
 		
 		
 		txtNombre = new JTextField();
@@ -283,36 +327,6 @@ public class RegistroHuesped extends JFrame {
 		panel.add(logo);
 		logo.setIcon(new ImageIcon(RegistroHuesped.class.getResource("/imagenes/Ha-100px.png")));
 		
-		JPanel btnexit = new JPanel();
-		btnexit.setBounds(857, 0, 53, 36);
-		contentPane.add(btnexit);
-		btnexit.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				MenuPrincipal principal = new MenuPrincipal();
-				principal.setVisible(true);
-				dispose();
-			}
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnexit.setBackground(Color.red);
-				labelExit.setForeground(Color.white);
-			}			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				 btnexit.setBackground(Color.white);
-			     labelExit.setForeground(Color.black);
-			}
-		});
-		btnexit.setLayout(null);
-		btnexit.setBackground(Color.white);
-		
-		labelExit = new JLabel("X");
-		labelExit.setBounds(0, 0, 53, 36);
-		btnexit.add(labelExit);
-		labelExit.setHorizontalAlignment(SwingConstants.CENTER);
-		labelExit.setForeground(SystemColor.black);
-		labelExit.setFont(new Font("Roboto", Font.PLAIN, 18));
 	}
 	
 	
