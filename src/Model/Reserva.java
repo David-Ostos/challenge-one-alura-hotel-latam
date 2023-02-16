@@ -12,6 +12,15 @@ public class Reserva {
 	
 	
 	
+	public Reserva(Integer id, Date fechaE, Date fechaS, String valor, String formaPago) {
+		super();
+		this.id = id;
+		this.fechaE = fechaE;
+		this.fechaS = fechaS;
+		this.valor = valor;
+		this.formaPago = formaPago;
+	}
+
 	public Reserva(Date fechaE, Date fechaS, String valor, String formaPago) {
 		super();
 		this.fechaE = fechaE;

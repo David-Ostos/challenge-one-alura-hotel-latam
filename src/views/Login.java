@@ -4,6 +4,11 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import Controller.UsuarioController;
+import Model.Usuarios;
+
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -29,6 +34,8 @@ public class Login extends JFrame {
 	private JPasswordField txtContrasena;
 	int xMouse, yMouse;
 	private JLabel labelExit;
+	private UsuarioController usuarioController;
+	private DefaultTableModel modelo;
 
 	/**
 	 * Launch the application.
@@ -118,6 +125,7 @@ public class Login extends JFrame {
 			        }
 			        if (String.valueOf(txtContrasena.getPassword()).isEmpty()) {
 			        	txtContrasena.setText("********");
+			        	txtUsuario.setText("");
 			        	txtContrasena.setForeground(Color.gray);
 			        }
 			}
@@ -192,10 +200,11 @@ public class Login extends JFrame {
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				
 				Login();
 			}
 		});
-		btnLogin.setBackground(SystemColor.textHighlight);
+		btnLogin.setBackground(new Color(1, 127, 202));
 		btnLogin.setBounds(65, 431, 122, 44);
 		panel.add(btnLogin);
 		btnLogin.setLayout(null);
@@ -234,19 +243,21 @@ public class Login extends JFrame {
 		header.setLayout(null);
 	}
 	
+	/**
+	 * 
+	 */
 	private void Login() {
-		 String Usuario= "admin";
-	     String Contraseña="admin";
-
-	        String contrase=new String (txtContrasena.getPassword());
-
-	        if(txtUsuario.getText().equals(Usuario) && contrase.equals(Contraseña)){
-	            MenuUsuario menu = new MenuUsuario();
-	            menu.setVisible(true);
-	            dispose();	 
-	        }else {
-	            JOptionPane.showMessageDialog(this, "Usuario o Contraseña no válidos");
-	        }
+		
+		  String Usuario = "admin";
+		  
+		  String Contraseña="admin";
+		  
+		  String contrase=new String (txtContrasena.getPassword());
+		  
+		  if(txtUsuario.getText().equals(Usuario) && contrase.equals(Contraseña)){
+		  MenuUsuario menu = new MenuUsuario(); menu.setVisible(true); dispose(); }else
+		  { JOptionPane.showMessageDialog(this, "Usuario o Contraseña no válidos");
+		   }
 	} 
 	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
 	        xMouse = evt.getX();

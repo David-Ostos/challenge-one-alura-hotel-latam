@@ -1,7 +1,9 @@
-package Factory;
+package test;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import Factory.ConnectionFactory;
 
 public class TestConnection {
 

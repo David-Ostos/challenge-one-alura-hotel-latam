@@ -8,6 +8,7 @@ import java.awt.Panel;
 import java.awt.Color;
 import java.awt.SystemColor;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -108,7 +109,16 @@ public class MenuPrincipal extends JFrame {
 		btnexit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.exit(0);
+				int seleccion = JOptionPane.showConfirmDialog(null, "¿Desea Salir?");
+				if (JOptionPane.OK_OPTION == seleccion) {
+					
+					JOptionPane.showMessageDialog(null, "Hastas luego");
+					System.exit(0);
+					
+				}else {	
+				
+				}
+				
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -160,7 +170,7 @@ public class MenuPrincipal extends JFrame {
 		lblTitulo.setBackground(SystemColor.window);
 		panel.add(lblTitulo);
 		lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitulo.setForeground(SystemColor.textHighlight);
+		lblTitulo.setForeground(new Color(1, 127, 202));
 		lblTitulo.setFont(new Font("Roboto Light", Font.PLAIN, 20));
 	}
 	

@@ -3,8 +3,15 @@ package views;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import Controller.HuespedControllet;
+import Controller.ReservasController;
+import Model.Huesped;
+import Model.Reserva;
+
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -12,9 +19,13 @@ import javax.swing.ImageIcon;
 import java.awt.Color;
 import java.awt.SystemColor;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
@@ -24,6 +35,7 @@ import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.sql.Date;
 
 @SuppressWarnings("serial")
 public class Busqueda extends JFrame {
@@ -37,11 +49,17 @@ public class Busqueda extends JFrame {
 	private JLabel labelAtras;
 	private JLabel labelExit;
 	int xMouse, yMouse;
+	private ReservasController reservasController;
+	private HuespedControllet huespedControllet;
+	String reserva;
+	String huespedes;
+	
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		System.out.println();
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -58,6 +76,9 @@ public class Busqueda extends JFrame {
 	 * Create the frame.
 	 */
 	public Busqueda() {
+		this.huespedControllet = new HuespedControllet();
+		this.reservasController = new ReservasController();
+		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Busqueda.class.getResource("/imagenes/lupa2.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 910, 571);
@@ -68,6 +89,8 @@ public class Busqueda extends JFrame {
 		contentPane.setLayout(null);
 		setLocationRelativeTo(null);
 		setUndecorated(true);
+		contentPane.setLayout(null);
+		JScrollPane scrollPane = new JScrollPane(tbReservas);
 		
 		txtBuscar = new JTextField();
 		txtBuscar.setBounds(536, 127, 193, 31);
@@ -101,7 +124,7 @@ public class Busqueda extends JFrame {
 		modelo.addColumn("Fecha Check Out");
 		modelo.addColumn("Valor");
 		modelo.addColumn("Forma de Pago");
-		
+		LlenarTablaReserva();
 		
 		tbHuespedes = new JTable();
 		tbHuespedes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -115,6 +138,7 @@ public class Busqueda extends JFrame {
 		modeloH.addColumn("Nacionalidad");
 		modeloH.addColumn("Telefono");
 		modeloH.addColumn("Numero de Reserva");
+		LlenarTablaHuespedes();
 		
 		JLabel lblNewLabel_2 = new JLabel("");
 		lblNewLabel_2.setIcon(new ImageIcon(Busqueda.class.getResource("/imagenes/Ha-100px.png")));
@@ -211,6 +235,14 @@ public class Busqueda extends JFrame {
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				limpiarTabla();
+				if (txtBuscar.getText().equals("")) {
+					LlenarTablaHuespedes();
+					LlenarTablaReserva();
+				}else {
+					LlenarTablaHuespedesId();
+					LlenarTablaReservaId();
+				}
 
 			}
 		});
@@ -228,6 +260,29 @@ public class Busqueda extends JFrame {
 		lblBuscar.setFont(new Font("Roboto", Font.PLAIN, 18));
 		
 		JPanel btnEditar = new JPanel();
+		btnEditar.addMouseListener(new MouseAdapter() {
+		
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				int filaReservas = tbReservas.getSelectedRow();
+				int filaHuesped = tbHuespedes.getSelectedRow();
+				
+				if(filaReservas >= 0) {
+					ActualizarReservas();
+					limpiarTabla();
+					LlenarTablaReserva();
+					LlenarTablaHuespedes();
+					
+				}else if(filaHuesped >=0) {
+					ActualizarHuespedes();
+					limpiarTabla();
+					LlenarTablaHuespedes();
+					LlenarTablaReserva();
+				}
+			}
+		});
+		
 		btnEditar.setLayout(null);
 		btnEditar.setBackground(new Color(12, 138, 199));
 		btnEditar.setBounds(635, 508, 122, 35);
@@ -257,6 +312,117 @@ public class Busqueda extends JFrame {
 		setResizable(false);
 	}
 	
+	private void limpiarTabla() {
+		((DefaultTableModel) tbHuespedes.getModel()).setRowCount(0);
+		((DefaultTableModel) tbReservas.getModel()).setRowCount(0);
+	}
+	
+	private List<Reserva> BuscarReserva(){
+		return this.reservasController.listarReserva(); 
+	}
+	private List<Reserva> BuscarReservaId(){
+		return this.reservasController.listarReservaId( txtBuscar.getText()); 
+	}
+	
+	private void LlenarTablaReserva() {
+		List<Reserva> reservas = BuscarReserva();
+		try {
+			for (Reserva reserva : reservas) {
+				modelo.addRow(new Object[] { reserva.getId(),reserva.getFechaE(),reserva.getFechaS(),reserva.getValor(),
+						reserva.getFormaPago()	
+				});	
+			}
+		}catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	private void LlenarTablaReservaId() {
+		List<Reserva> reservas = BuscarReservaId();
+		try {
+			for (Reserva reserva : reservas) {
+				modelo.addRow(new Object[] { reserva.getId(),reserva.getFechaE(),reserva.getFechaS(),reserva.getValor(),
+						reserva.getFormaPago()	
+				});	
+			}
+		}catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+ 	private List<Huesped> BuscarHuespedes(){
+		return this.huespedControllet.listarHuespedes();
+	}
+	
+	private List<Huesped> BuscarHuespedesId() {
+		
+		return this.huespedControllet.listarHuespedesId( txtBuscar.getText());
+	}
+	
+	private void LlenarTablaHuespedes() {
+		List<Huesped> huespedes = BuscarHuespedes();
+		try {
+			for (Huesped huesped : huespedes) {
+				modeloH.addRow( new Object[] { huesped.getId(), huesped.getNombre(),
+						huesped.getApellido(), huesped.getFechaNacimineto(),huesped.getNacionalidad(),
+						huesped.getTelefono(),huesped.getIdReserva()});
+			}
+		}catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private void LlenarTablaHuespedesId() {
+		List<Huesped> huespedes = BuscarHuespedesId();
+		try {
+			for (Huesped huesped : huespedes) {
+				modeloH.addRow( new Object[] { huesped.getId(), huesped.getNombre(),
+						huesped.getApellido(), huesped.getFechaNacimineto(),huesped.getNacionalidad(),
+						huesped.getTelefono(),huesped.getIdReserva()});
+			}
+		}catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private void ActualizarReservas() {
+		Optional.ofNullable(modelo.getValueAt(tbReservas.getSelectedRow(),tbReservas.getSelectedColumn()))
+		.ifPresentOrElse(fila ->{
+			
+			Date fechaE = Date.valueOf(modelo.getValueAt(tbReservas.getSelectedRow(), 1).toString());
+			Date fechaS = Date.valueOf(modelo.getValueAt(tbReservas.getSelectedRow(), 2).toString());
+			String valor = (String) modelo.getValueAt(tbReservas.getSelectedRow(),3);
+			String formaPago = (String) modelo.getValueAt(tbReservas.getSelectedRow(), 4);
+			Integer id = Integer.valueOf(modelo.getValueAt(tbReservas.getSelectedRow(), 0).toString());
+			
+			this.reservasController.actualizar(fechaE,fechaS,valor,formaPago,id);
+			JOptionPane.showMessageDialog(this, String.format("Registro modificado con éxito."));
+			
+		}, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un registro"));
+	}
+	
+	private void ActualizarHuespedes() {
+		Optional.ofNullable(modeloH.getValueAt(tbHuespedes.getSelectedRow(),tbHuespedes.getSelectedColumn()))
+		.ifPresentOrElse(filaH ->{
+			
+			String nombre = (String) modeloH.getValueAt(tbHuespedes.getSelectedRow(), 1);
+			String apellido = (String) modeloH.getValueAt(tbHuespedes.getSelectedRow(), 2);
+			Date fechaN = Date.valueOf(modeloH.getValueAt(tbHuespedes.getSelectedRow(), 3).toString()); 
+			String nacionalidad = (String) modeloH.getValueAt(tbHuespedes.getSelectedRow(), 4);
+			String tlf = (String) modeloH.getValueAt(tbHuespedes.getSelectedRow(), 5);
+			Integer idReferencia = Integer.valueOf(modeloH.getValueAt(tbHuespedes.getSelectedRow(), 6).toString());
+			Integer id = Integer.valueOf(modeloH.getValueAt(tbHuespedes.getSelectedRow(), 0).toString());
+			
+			this.huespedControllet.actualizar(nombre,apellido,fechaN,nacionalidad,tlf,idReferencia,id);
+			
+			JOptionPane.showMessageDialog(this, String.format("Registro modificado con éxito."));
+			
+		}, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un registro"));
+		
+	}
+
+	
+
+
 //Código que permite mover la ventana por la pantalla según la posición de "x" y "y"
 	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
 	        xMouse = evt.getX();

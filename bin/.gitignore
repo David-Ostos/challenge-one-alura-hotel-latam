@@ -1,5 +1,4 @@
-/views/
-/Controller/
-/DAO/
-/Factory/
 /Model/
+/DAO/
+/Controller/
+/views/

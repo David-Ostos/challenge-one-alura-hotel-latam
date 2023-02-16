@@ -7,6 +7,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
+
+import Controller.HuespedControllet;
+import Controller.ReservasController;
+import Model.Huesped;
+
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
@@ -19,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.sql.Date;
 import java.text.Format;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
@@ -38,6 +44,9 @@ public class RegistroHuesped extends JFrame {
 	private JLabel labelExit;
 	private JLabel labelAtras;
 	int xMouse, yMouse;
+	private HuespedControllet huespedController;
+	private ReservasController reservasController;
+	int id;
 
 	/**
 	 * Launch the application.
@@ -46,7 +55,7 @@ public class RegistroHuesped extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RegistroHuesped frame = new RegistroHuesped();
+					RegistroHuesped frame = new RegistroHuesped(0);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -58,7 +67,9 @@ public class RegistroHuesped extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public RegistroHuesped() {
+	public RegistroHuesped(int idReserva) {
+		this.huespedController = new HuespedControllet();
+		this.reservasController = new ReservasController();
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(RegistroHuesped.class.getResource("/imagenes/lOGO-50PX.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -254,6 +265,10 @@ public class RegistroHuesped extends JFrame {
 		txtNreserva.setColumns(10);
 		txtNreserva.setBackground(Color.WHITE);
 		txtNreserva.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+		txtNreserva.setEditable(false); // esto es para que no se pueda editar el campo
+		System.out.println(idReserva);
+		String id = String.valueOf(idReserva);
+		txtNreserva.setText(id);
 		contentPane.add(txtNreserva);
 		
 		JSeparator separator_1_2 = new JSeparator();
@@ -297,6 +312,18 @@ public class RegistroHuesped extends JFrame {
 		btnguardar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				try {
+					
+					GuardarHuesped();
+					JOptionPane.showMessageDialog(null,"Su numero de reserva es: " + id);
+					Exito exito = new Exito();
+					exito.setVisible(true);
+					dispose();
+					
+				}catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1);
+				}
+					
 			}
 		});
 		btnguardar.setLayout(null);
@@ -330,6 +357,24 @@ public class RegistroHuesped extends JFrame {
 	}
 	
 	
+	private void GuardarHuesped(){
+		
+		if( !txtNombre.equals("") && !txtApellido.equals("") && txtFechaN.getDate() != null && !txtTelefono.equals("") )
+		{
+			String FechaN = ((JTextField) txtFechaN.getDateEditor().getUiComponent()).getText();
+			int nReserva = Integer.parseInt(txtNreserva.getText());
+			Huesped huesped = new Huesped(txtNombre.getText(), txtApellido.getText(),Date.valueOf(FechaN),txtNacionalidad.getSelectedItem().toString(), txtTelefono.getText(),nReserva);
+			this.huespedController.guardar(huesped);
+
+
+		}else {
+			JOptionPane.showMessageDialog(this, "Debes llenar todos los campos.");
+		}
+	}
+	
+	
+
+
 	//Código que permite mover la ventana por la pantalla según la posición de "x" y "y"	
 	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
 	        xMouse = evt.getX();
